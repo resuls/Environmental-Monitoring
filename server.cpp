@@ -57,11 +57,11 @@ int main(int _argc, char **_argv)
     }
 
     // Accept
-    int client_address = accept(server_socket, nullptr, nullptr);
+    int client_comm = accept(server_socket, nullptr, nullptr);
 
     // Receive
     char rcv_msg[BUFFER_SIZE];
-    int rVal = recv(client_address, rcv_msg, BUFFER_SIZE, 0);
+    int rVal = recv(client_comm, rcv_msg, BUFFER_SIZE, 0);
     if (rVal < 0)
     {
         cout << "Error on receive!\n";
@@ -79,7 +79,7 @@ int main(int _argc, char **_argv)
     // Send
     char* send_msg = "Hello World from Server!\0";
     int msgSize = strlen(send_msg); // check size!
-    int sVal = send(client_address, send_msg, msgSize + 1, 0);
+    int sVal = send(client_comm, send_msg, msgSize + 1, 0);
 
     if (sVal < 0)
     {
@@ -88,6 +88,15 @@ int main(int _argc, char **_argv)
     else
     {
         cout << "Successfully sent\n";
+    }
+
+    if (close(server_socket) < 0)
+    {
+        cout << "Couldn't close socket!\n";
+    }
+    else
+    {
+        cout << "Closed socket!\n";
     }
 }
 

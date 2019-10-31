@@ -74,6 +74,15 @@ int main(int _argc, char **_argv)
         cout << "Successfully received message of size " << rVal << "\n";
         cout << rcv_msg << endl;
     }
+
+    if (close(client_socket) < 0)
+    {
+        cout << "Couldn't close socket!\n";
+    }
+    else
+    {
+        cout << "Closed socket!\n";
+    }
 }
 
 #endif
