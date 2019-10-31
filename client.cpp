@@ -14,6 +14,12 @@ using namespace std;
 
 int main(int _argc, char **_argv)
 {
+    const int PORTNUM = atoi(_argv[1]);
+    const char* SERVERIP = _argv[2];
+
+    cout << PORTNUM << endl;
+    cout << SERVERIP << endl;
+
     //  Create socket
     int client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -30,8 +36,8 @@ int main(int _argc, char **_argv)
     // connect
     sockaddr_in server_address{};
     server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(5559);
-    server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server_address.sin_port = htons(PORTNUM);
+    server_address.sin_addr.s_addr = inet_addr(SERVERIP);
     memset(&(server_address.sin_zero), '\0', 8);
 
     if (connect(client_socket, (sockaddr*) &server_address, sizeof(server_address)) < 0)

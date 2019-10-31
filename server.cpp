@@ -14,6 +14,8 @@ using namespace std;
 
 int main(int _argc, char **_argv)
 {
+    const int PORTNUM = atoi(_argv[1]);
+
     //  Create socket
     int server_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -29,7 +31,6 @@ int main(int _argc, char **_argv)
 
     // Bind
     sockaddr_in server_address{};
-    const int PORTNUM = 5559;
 
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
