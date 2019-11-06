@@ -46,18 +46,18 @@ int main(int _argc, char **_argv)
     {
         cout << "bound to port\n";
     }
-        // Listen
-        if (listen(server_socket, 5) < 0)
-        {
-            cout << "Error on listening!\n";
-            exit(-1);
-        } else
-        {
-            cout << "Listening...\n";
-        }
+    // Listen
+    if (listen(server_socket, 5) < 0)
+    {
+        cout << "Error on listening!\n";
+        exit(-1);
+    } else
+    {
+        cout << "Listening...\n";
+    }
 
-        // Accept
-        int client_comm = accept(server_socket, nullptr, nullptr);
+    // Accept
+    int client_comm = accept(server_socket, nullptr, nullptr);
 
     while (true)
     {

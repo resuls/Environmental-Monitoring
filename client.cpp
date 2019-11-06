@@ -53,6 +53,11 @@ int main(int _argc, char **_argv)
         cout << "Enter message: ";
         cin.getline(send_msg, 100);
 
+        if (strcmp(send_msg, "EXIT") == 0)
+        {
+            break;
+        }
+
         // Send message
         int msgSize = strlen(send_msg); // check size!
 
