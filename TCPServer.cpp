@@ -83,7 +83,12 @@ void TCPServer::ClientCommunication(int client_comm)
 
         if (rVal > 0)
         {
-            char *msg = "ACK\0";
+            char msg[BUFFER_SIZE];
+            msg[0] = '\0';
+            char *echo = "ECHO: ";
+            strcat(msg, echo);
+            strcat(msg, rcv_msg);
+
             int msgSize = strlen(msg);
             int sVal = send(client_comm, msg, msgSize + 1, 0);
 
