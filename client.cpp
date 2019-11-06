@@ -17,9 +17,6 @@ int main(int _argc, char **_argv)
     const int PORTNUM = atoi(_argv[1]);
     const char* SERVERIP = _argv[2];
 
-    cout << PORTNUM << endl;
-    cout << SERVERIP << endl;
-
     //  Create socket
     int client_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
@@ -49,36 +46,46 @@ int main(int _argc, char **_argv)
         cout << "Successfully connected\n";
     }
 
-    // Send
-    char* send_msg = "Hello World from Client!\0";
-    int msgSize = strlen(send_msg); // check size!
+    while (true)
+    {
+        // Read message
+        char send_msg[100];
+        cout << "Enter message: ";
+        cin.getline(send_msg, 100);
 
-    int sVal = send(client_socket, send_msg, msgSize + 1, 0);
+        // Send message
+        int msgSize = strlen(send_msg); // check size!
 
-    if (sVal < 0)
-    {
-        cout << "Error on sending\n";
-    }
-    else
-    {
-        cout << "Successfully sent\n";
-    }
+        int sVal = send(client_socket, send_msg, msgSize + 1, 0);
 
-    // Receive
-    char rcv_msg[BUFFER_SIZE];
-    int rVal = recv(client_socket, rcv_msg, BUFFER_SIZE, 0);
-    if (rVal < 0)
-    {
-        cout << "Error on receive!\n";
-    }
-    else if (rVal == 0)
-    {
-        cout << "Communication interrupted!\n";
-    }
-    else
-    {
-        cout << "Successfully received message of size " << rVal << "\n";
-        cout << rcv_msg << endl;
+        if (sVal < 0)
+        {
+            cout << "Error on sending\n";
+            break;
+        }
+        else
+        {
+            cout << "Successfully sent\n";
+        }
+
+        // Receive
+        char rcv_msg[BUFFER_SIZE];
+        int rVal = recv(client_socket, rcv_msg, BUFFER_SIZE, 0);
+        if (rVal < 0)
+        {
+            cout << "Error on receive!\n";
+            break;
+        }
+        else if (rVal == 0)
+        {
+            cout << "Communication interrupted!\n";
+            break;
+        }
+        else
+        {
+            cout << "Successfully received message of size " << rVal << "\n";
+            cout << rcv_msg << endl;
+        }
     }
 
     if (close(client_socket) < 0)

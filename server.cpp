@@ -46,49 +46,53 @@ int main(int _argc, char **_argv)
     {
         cout << "bound to port\n";
     }
+        // Listen
+        if (listen(server_socket, 5) < 0)
+        {
+            cout << "Error on listening!\n";
+            exit(-1);
+        } else
+        {
+            cout << "Listening...\n";
+        }
 
-    // Listen
-    if (listen(server_socket, 5) < 0)
-    {
-        cout << "Error on listening!\n";
-        exit(-1);
-    } else
-    {
-        cout << "Listening...\n";
-    }
+        // Accept
+        int client_comm = accept(server_socket, nullptr, nullptr);
 
-    // Accept
-    int client_comm = accept(server_socket, nullptr, nullptr);
+    while (true)
+    {
+        // Receive
+        char rcv_msg[BUFFER_SIZE];
+        int rVal = recv(client_comm, rcv_msg, BUFFER_SIZE, 0);
+        if (rVal < 0)
+        {
+            cout << "Error on receive!\n";
+            break;
+        }
+        else if (rVal == 0)
+        {
+            cout << "Communication interrupted!\n";
+            break;
+        }
+        else
+        {
+            cout << "Successfully received message of size " << rVal << "\n";
+            cout << rcv_msg << endl;
+        }
 
-    // Receive
-    char rcv_msg[BUFFER_SIZE];
-    int rVal = recv(client_comm, rcv_msg, BUFFER_SIZE, 0);
-    if (rVal < 0)
-    {
-        cout << "Error on receive!\n";
-    }
-    else if (rVal == 0)
-    {
-        cout << "Communication interrupted!\n";
-    }
-    else
-    {
-        cout << "Successfully received message of size " << rVal << "\n";
-        cout << rcv_msg << endl;
-    }
+        // Send
+        char* send_msg = "ACK\0";
+        int msgSize = strlen(send_msg); // check size!
+        int sVal = send(client_comm, send_msg, msgSize + 1, 0);
 
-    // Send
-    char* send_msg = "Hello World from Server!\0";
-    int msgSize = strlen(send_msg); // check size!
-    int sVal = send(client_comm, send_msg, msgSize + 1, 0);
-
-    if (sVal < 0)
-    {
-        cout << "Error on sending\n";
-    }
-    else
-    {
-        cout << "Successfully sent\n";
+        if (sVal < 0)
+        {
+            cout << "Error on sending\n";
+        }
+        else
+        {
+            cout << "Successfully sent\n";
+        }
     }
 
     if (close(server_socket) < 0)
