@@ -1,5 +1,6 @@
 #include "TCPServer.h"
 #include "UDPServer.h"
+#include "TCPServerV6.h"
 
 int getMenu();
 
@@ -12,7 +13,12 @@ int main(int _argc, char **_argv)
     if (choice == 1)
     {
         TCPServer server(PORTNUM);
-    } else if (choice == 3)
+    }
+    else if (choice == 2)
+    {
+        TCPServerV6 serverV6(PORTNUM);
+    }
+    else if (choice == 3)
     {
         UDPServer udpServer(PORTNUM);
     }
