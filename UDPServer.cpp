@@ -41,17 +41,6 @@ void UDPServer::InitializeSocket()
 //        std::cout << "bound to port\n";
 //    }
 
-    // Listen
-    if (listen(udpSocket, 5) < 0)
-    {
-        std::cout << "Error on listening!\n";
-        return;
-    }
-    else
-    {
-        std::cout << "Listening...\n";
-    }
-
     do
     {
         std::cout << "Client connected..." << std::endl;

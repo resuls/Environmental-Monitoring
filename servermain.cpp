@@ -12,7 +12,7 @@ int main(int _argc, char **_argv)
     if (choice == 1)
     {
         TCPServer server(PORTNUM);
-    } else if (choice == 2)
+    } else if (choice == 3)
     {
         UDPServer udpServer(PORTNUM);
     }
