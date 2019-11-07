@@ -48,7 +48,7 @@ void UDPServer::InitializeSocket()
     } while (mActive);
 }
 
-void UDPServer::ClientCommunication(int udpSocket)
+void UDPServer::ClientCommunication(int _udpSocket)
 {
     while (true)
     {
@@ -56,7 +56,7 @@ void UDPServer::ClientCommunication(int udpSocket)
         sockaddr_in from{};
         int fromSize = sizeof(from);
 
-        int rVal = recvfrom(udpSocket, rcv_msg, BUFFER_SIZE, 0, (sockaddr*)&from , &fromSize);
+        int rVal = recvfrom(_udpSocket, rcv_msg, BUFFER_SIZE, 0, (sockaddr*)&from , &fromSize);
         if (rVal < 0)
         {
             std::cout << "Error on receive!\n";
@@ -79,7 +79,7 @@ void UDPServer::ClientCommunication(int udpSocket)
             strcat(msg, rcv_msg);
 
             int msgSize = strlen(msg);
-            int sVal = sendto(udpSocket, msg, msgSize + 1, 0, (sockaddr*)&from, fromSize);
+            int sVal = sendto(_udpSocket, msg, msgSize + 1, 0, (sockaddr*)&from, fromSize);
 
             if (sVal < 0)
             {
@@ -93,7 +93,7 @@ void UDPServer::ClientCommunication(int udpSocket)
         }
     }
 
-    if (close(udpSocket) < 0)
+    if (close(_udpSocket) < 0)
     {
         std::cout << "Couldn't client communication!\n";
     } else

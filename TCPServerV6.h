@@ -18,7 +18,7 @@ private:
     int PORTNUM;
     bool mActive;
     void InitializeSocket();
-    void ClientCommunication(int client_comm);
+    void ClientCommunication(int _clientComm);
 
 public:
     explicit TCPServerV6(int _portnum);

@@ -19,11 +19,17 @@ private:
     int PORTNUM;
     bool mActive;
     void InitializeSocket();
-    void ClientCommunication(int client_comm);
+    static void ClientCommunication(void* _parameter);
 
 public:
     explicit TCPServer(int _portnum);
 };
+
+typedef struct {
+    int clientSocket;
+    sockaddr* saddr;
+} socketParam;
+
 
 #endif //INC_1_TCPSERVER_H
 #endif

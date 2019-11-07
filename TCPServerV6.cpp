@@ -65,12 +65,12 @@ void TCPServerV6::InitializeSocket()
     } while (mActive);
 }
 
-void TCPServerV6::ClientCommunication(int client_comm)
+void TCPServerV6::ClientCommunication(int _clientComm)
 {
     while (true)
     {
         char rcv_msg[BUFFER_SIZE];
-        int rVal = recv(client_comm, rcv_msg, BUFFER_SIZE, 0);
+        int rVal = recv(_clientComm, rcv_msg, BUFFER_SIZE, 0);
         if (rVal < 0)
         {
             std::cout << "Error on receive!\n";
@@ -93,7 +93,7 @@ void TCPServerV6::ClientCommunication(int client_comm)
             strcat(msg, rcv_msg);
 
             int msgSize = strlen(msg);
-            int sVal = send(client_comm, msg, msgSize + 1, 0);
+            int sVal = send(_clientComm, msg, msgSize + 1, 0);
 
             if (sVal < 0)
             {
@@ -107,7 +107,7 @@ void TCPServerV6::ClientCommunication(int client_comm)
         }
     }
 
-    if (close(client_comm) < 0)
+    if (close(_clientComm) < 0)
     {
         std::cout << "Couldn't client communication!\n";
     } else

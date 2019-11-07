@@ -17,7 +17,7 @@ private:
     int PORTNUM;
     bool mActive;
     void InitializeSocket();
-    void ClientCommunication(int udpSocket);
+    void ClientCommunication(int _udpSocket);
 
 public:
     explicit UDPServer(int _portnum);

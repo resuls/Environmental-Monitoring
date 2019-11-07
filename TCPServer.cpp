@@ -46,28 +46,40 @@ void TCPServer::InitializeSocket()
     {
         std::cout << "Error on listening!\n";
         return;
-    }
-    else
+    } else
     {
         std::cout << "Listening...\n";
     }
 
+
     // Accept
-    int client_comm;
+    typedef void * (*THREADFUNCPTR)(void *);
     do
     {
-        client_comm = accept(server_socket, nullptr, nullptr);
+        sockaddr_in client_address{};
+        int size = sizeof(client_address);
+        int clientSocket = ::accept(server_socket, (sockaddr*)&client_address, (socklen_t*) &size);
         std::cout << "Client connected..." << std::endl;
-        ClientCommunication(client_comm);
+
+        pthread_t t;
+        auto* parameter = new socketParam();
+        parameter->clientSocket = clientSocket;
+        parameter->saddr = (sockaddr*)&client_address;
+
+        int res = pthread_create(&t, nullptr, (THREADFUNCPTR) &TCPServer::ClientCommunication, parameter);
+//        ClientCommunication(client_comm);
     } while (mActive);
 }
 
-void TCPServer::ClientCommunication(int client_comm)
+void TCPServer::ClientCommunication(void* _parameter)
 {
+    socketParam* p = (socketParam*)_parameter;
+    int clientSocket = p->clientSocket;
+
     while (true)
     {
         char rcv_msg[BUFFER_SIZE];
-        int rVal = recv(client_comm, rcv_msg, BUFFER_SIZE, 0);
+        int rVal = recv(clientSocket, rcv_msg, BUFFER_SIZE, 0);
         if (rVal < 0)
         {
             std::cout << "Error on receive!\n";
@@ -90,7 +102,7 @@ void TCPServer::ClientCommunication(int client_comm)
             strcat(msg, rcv_msg);
 
             int msgSize = strlen(msg);
-            int sVal = send(client_comm, msg, msgSize + 1, 0);
+            int sVal = send(clientSocket, msg, msgSize + 1, 0);
 
             if (sVal < 0)
             {
@@ -104,9 +116,9 @@ void TCPServer::ClientCommunication(int client_comm)
         }
     }
 
-    if (close(client_comm) < 0)
+    if (close(clientSocket) < 0)
     {
-        std::cout << "Couldn't client communication!\n";
+        std::cout << "Couldn't close client communication!\n";
     } else
     {
         std::cout << "Closed client communication!\n";
