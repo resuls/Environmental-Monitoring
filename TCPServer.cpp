@@ -100,6 +100,8 @@ void TCPServer::ClientCommunication(void* _parameter)
 
     while (shouldConnect)
     {
+        std::string message;
+
         char rcv_msg[BUFFER_SIZE];
         int rVal = recv(clientSocket, rcv_msg, BUFFER_SIZE, 0);
         if (rVal < 0)
@@ -113,19 +115,33 @@ void TCPServer::ClientCommunication(void* _parameter)
         } else
         {
             std::cout << "Message: " << rcv_msg << "\n";
+            message = rcv_msg;
         }
 
+        std::string reply;
         if (rVal > 0)
         {
-            char msg[BUFFER_SIZE];
-            msg[0] = '\0';
-            char *echo = "ECHO: ";
-            strcat(msg, echo);
-            strcat(msg, rcv_msg);
+            if (message == "getSensortypes()")
+            {
+                reply = self->getSensortypes();
+            }
+            else if (message == "getAllSensors()")
+            {
+                reply = self->getAllSensors();
+            }
+            else if (message.find("getSensor") != std::string::npos)
+            {
+                int start = message.find('(') + 1;
+                int end = message.find(')');
+                std::string argument = message.substr(start, end - start);
+                reply = self->getSensor(argument);
+            }
+            else
+            {
+                reply = "No method found!";
+            }
 
-            int msgSize = strlen(msg);
-            int sVal = send(clientSocket, msg, msgSize + 1, 0);
-
+            int sVal = send(clientSocket, reply.c_str(), reply.size() + 1, 0);
             if (sVal < 0)
             {
                 std::cout << "Error on sending\n";
@@ -180,10 +196,6 @@ void TCPServer::updateSensors()
             s.second.push_back(val);
         }
     }
-
-//    std::cout << getSensortypes() << std::endl;
-//    std::cout << getSensor("air") << std::endl;
-//    std::cout << getAllSensors() << std::endl;
 }
 
 std::string TCPServer::getSensortypes()
@@ -214,6 +226,8 @@ std::string TCPServer::getSensor(const std::string& sensor)
         res.pop_back();
     }
 
+    if (res.empty())
+        return "";
     return res;
 }
 

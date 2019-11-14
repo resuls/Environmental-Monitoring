@@ -59,7 +59,6 @@ int main(int _argc, char **_argv)
 
         // Send message
         int msgSize = strlen(send_msg); // check size!
-
         int sVal = send(client_socket, send_msg, msgSize + 1, 0);
 
         if (sVal < 0)
