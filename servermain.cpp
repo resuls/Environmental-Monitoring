@@ -38,7 +38,7 @@ int getMenu()
            "4. EXIT\n");
     printf("--------------------\n");
 
-    scanf("%d", &choice);
+    std::cin >> choice;
 
     return choice;
 }

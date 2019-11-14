@@ -3,7 +3,8 @@
 TCPServer::TCPServer(int _portnum)
 {
     PORTNUM = _portnum;
-    mActive = true;
+    active = true;
+    threadCount = 0;
     InitializeSocket();
 }
 
@@ -51,6 +52,18 @@ void TCPServer::InitializeSocket()
         std::cout << "Listening...\n";
     }
 
+    // Create a semaphore with initial and max counts of MAX_SEM_COUNT
+    semaphore = CreateSemaphoreA(
+            nullptr,           // default security attributes
+            threadCount,               // initial count
+            MAXTHREADCOUNT,                       // maximum count
+            nullptr);                     // unnamed semaphore
+
+    if (semaphore == nullptr)
+    {
+        std::cout << "CreateSemaphore error\n";
+        return;
+    }
 
     // Accept
     typedef void * (*THREADFUNCPTR)(void *);
@@ -59,24 +72,38 @@ void TCPServer::InitializeSocket()
         sockaddr_in client_address{};
         int size = sizeof(client_address);
         int clientSocket = ::accept(server_socket, (sockaddr*)&client_address, (socklen_t*) &size);
-        std::cout << "Client connected..." << std::endl;
 
         pthread_t t;
         auto* parameter = new socketParam();
         parameter->clientSocket = clientSocket;
         parameter->saddr = (sockaddr*)&client_address;
+        parameter->self = this;
 
         int res = pthread_create(&t, nullptr, (THREADFUNCPTR) &TCPServer::ClientCommunication, parameter);
-//        ClientCommunication(client_comm);
-    } while (mActive);
+    } while (active);
+
+    ReleaseSemaphore(semaphore, 1, nullptr);
 }
 
 void TCPServer::ClientCommunication(void* _parameter)
 {
-    socketParam* p = (socketParam*)_parameter;
+    auto* p = (socketParam*)_parameter;
     int clientSocket = p->clientSocket;
+    TCPServer* self = p->self;
+    bool shouldConnect = true;
 
-    while (true)
+    if (self->threadCount < MAXTHREADCOUNT)
+    {
+        std::cout << "Client connected..." << std::endl;
+        self->IncrCounter();
+    }
+    else
+    {
+        shouldConnect = false;
+        std::cout << "Max thread limit reached!" << std::endl;
+    }
+
+    while (shouldConnect)
     {
         char rcv_msg[BUFFER_SIZE];
         int rVal = recv(clientSocket, rcv_msg, BUFFER_SIZE, 0);
@@ -123,4 +150,19 @@ void TCPServer::ClientCommunication(void* _parameter)
     {
         std::cout << "Closed client communication!\n";
     }
+    self->DecrCounter();
+}
+
+void TCPServer::IncrCounter()
+{
+    if (threadCount < MAXTHREADCOUNT)
+        threadCount++;
+
+    std::cout << "Connected clients: " << threadCount << std::endl;
+}
+
+void TCPServer::DecrCounter()
+{
+    if (threadCount > 0)
+        threadCount--;
 }
