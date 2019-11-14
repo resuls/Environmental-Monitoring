@@ -5,7 +5,6 @@
 #include <unistd.h> // close
 #include <arpa/inet.h> // inet_ntop/inet_atop
 #include <cstring> // strlen
-#include <semaphore.h> // sem_init
 
 #ifndef SOCKETSERVER_H
 #define SOCKETSERVER_H

@@ -1,3 +1,4 @@
+#include <random>
 #include "TCPServer.h"
 
 TCPServer::TCPServer(int _portnum)
@@ -5,6 +6,8 @@ TCPServer::TCPServer(int _portnum)
     PORTNUM = _portnum;
     active = true;
     threadCount = 0;
+    initSensors();
+    updateSensors();
     InitializeSocket();
 }
 
@@ -21,10 +24,6 @@ void TCPServer::InitializeSocket()
         std::cout << "Error while creating a socket\n";
         return;
     }
-//    else
-//    {
-//        std::cout << "created socket\n";
-//    }
 
     // Bind
     server_address.sin_family = AF_INET;
@@ -37,10 +36,6 @@ void TCPServer::InitializeSocket()
         std::cout << "ERROR on binding\n";
         return;
     }
-//    else
-//    {
-//        std::cout << "bound to port\n";
-//    }
 
     // Listen
     if (listen(server_socket, 5) < 0)
@@ -136,10 +131,6 @@ void TCPServer::ClientCommunication(void* _parameter)
                 std::cout << "Error on sending\n";
                 break;
             }
-//            else
-//            {
-//                std::cout << "Successfully sent\n";
-//            }
         }
     }
 
@@ -165,4 +156,83 @@ void TCPServer::DecrCounter()
 {
     if (threadCount > 0)
         threadCount--;
+}
+
+void TCPServer::initSensors()
+{
+    sensors["air"] = {};
+    sensors["noise"] = {};
+    sensors["light"] = {};
+}
+
+void TCPServer::updateSensors()
+{
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_int_distribution<int> counts(1, 10);
+    for (auto& s : sensors)
+    {
+        int count = counts(mt);
+        std::uniform_int_distribution<int> values(1, 1000);
+        for (int i = 0; i < count; i++)
+        {
+            int val = counts(mt);
+            s.second.push_back(val);
+        }
+    }
+
+//    std::cout << getSensortypes() << std::endl;
+//    std::cout << getSensor("air") << std::endl;
+//    std::cout << getAllSensors() << std::endl;
+}
+
+std::string TCPServer::getSensortypes()
+{
+    std::string res;
+    for (const auto& s : sensors)
+    {
+        res += s.first + ";";
+    }
+    res.pop_back();
+    return res;
+}
+
+std::string TCPServer::getSensor(const std::string& sensor)
+{
+    std::string res;
+    auto iter = sensors.find(sensor);
+    if (iter != sensors.end())
+    {
+        std::time_t time = std::time(nullptr);
+        res += std::to_string(time) + "|";
+
+        for (auto i : iter->second)
+        {
+            res += std::to_string(i) + ";";
+        }
+
+        res.pop_back();
+    }
+
+    return res;
+}
+
+std::string TCPServer::getAllSensors()
+{
+    std::time_t time = std::time(nullptr);
+    std::string res = std::to_string(time) + "|";
+
+    for (const auto& s : sensors)
+    {
+        res += s.first + ";";
+        for (auto i : s.second)
+        {
+            res += std::to_string(i) + ";";
+        }
+        res.pop_back();
+        res += "|";
+    }
+    res.pop_back();
+
+    return res;
 }

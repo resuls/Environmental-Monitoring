@@ -7,6 +7,10 @@
 #include <cstring> // strlen
 #include <semaphore.h> // sem_init
 #include <windows.h>
+#include <string>
+#include <map>
+#include <vector>
+#include <ctime>
 
 #ifndef SOCKETSERVER_H
 #define SOCKETSERVER_H
@@ -22,11 +26,16 @@ private:
     bool active;
     int threadCount;
     HANDLE semaphore;
+    std::map <std::string, std::vector<int> > sensors;
     void InitializeSocket();
     static void ClientCommunication(void*);
     void IncrCounter();
     void DecrCounter();
-    void PrintConnectedClients();
+    void updateSensors();
+    void initSensors();
+    std::string getSensortypes();
+    std::string getSensor(const std::string&);
+    std::string getAllSensors();
 public:
     explicit TCPServer(int);
 };
