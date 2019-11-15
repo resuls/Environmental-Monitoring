@@ -141,7 +141,8 @@ void TCPServer::ClientCommunication(void* _parameter)
                 reply = "No method found!";
             }
 
-            int sVal = send(clientSocket, reply.c_str(), reply.size() + 1, 0);
+            reply += "\n";
+            int sVal = send(clientSocket, reply.c_str(), reply.size(), 0);
             if (sVal < 0)
             {
                 std::cout << "Error on sending\n";
