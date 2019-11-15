@@ -35,7 +35,7 @@ public class Client
             }
 
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            out.printf(input);
+            out.println(input);
 
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println(br.readLine());
