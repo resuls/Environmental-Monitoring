@@ -100,9 +100,9 @@ void TCPServer::ClientCommunication(void* _parameter)
 
     while (shouldConnect)
     {
-        std::string message;
+        std::string message = "";
 
-        char rcv_msg[BUFFER_SIZE];
+        char rcv_msg[BUFFER_SIZE] = "\0";
         int rVal = recv(clientSocket, rcv_msg, BUFFER_SIZE, 0);
         if (rVal < 0)
         {
@@ -118,18 +118,21 @@ void TCPServer::ClientCommunication(void* _parameter)
             message = rcv_msg;
         }
 
-        std::string reply;
+        std::string reply = "";
+        std::regex types ("getSensortypes\\(\\)");
+        std::regex all ("getAllSensors\\(\\)");
+        std::regex sensor ("getSensor\\(.+\\)");
         if (rVal > 0)
         {
-            if (message == "getSensortypes()")
+            if (std::regex_search(message, types))
             {
                 reply = self->getSensortypes();
             }
-            else if (message == "getAllSensors()")
+            else if (std::regex_search(message, all))
             {
                 reply = self->getAllSensors();
             }
-            else if (message.find("getSensor") != std::string::npos)
+            else if (std::regex_search(message, sensor))
             {
                 int start = message.find('(') + 1;
                 int end = message.find(')');

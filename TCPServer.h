@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <ctime>
+#include <regex>
 
 #ifndef SOCKETSERVER_H
 #define SOCKETSERVER_H
