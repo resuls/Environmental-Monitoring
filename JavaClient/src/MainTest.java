@@ -6,8 +6,8 @@ public class MainTest
 
         while (true)
         {
-            String[] sensors = service.requestEnvironmentDataTypes();
-            for (String sensor : sensors)
+            String[] mSensors = service.requestEnvironmentDataTypes();
+            for (String sensor : mSensors)
             {
                 EnvironmentData dataO = service.requestEnvironmentData(sensor);
                 System.out.print(dataO);
@@ -23,6 +23,8 @@ public class MainTest
             {
                 System.out.println(dataO);
             }
+
+            System.out.println("*****************************");
 
             try
             {

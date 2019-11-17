@@ -3,9 +3,9 @@
 
 TCPServer::TCPServer(int _portnum)
 {
-    PORTNUM = _portnum;
-    active = true;
-    threadCount = 0;
+    mPortNum = _portnum;
+    mActive = true;
+    mThreadCount = 0;
     initSensors();
     updateSensors();
     InitializeSocket();
@@ -28,7 +28,7 @@ void TCPServer::InitializeSocket()
     // Bind
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons(PORTNUM);
+    server_address.sin_port = htons(mPortNum);
     memset(&(server_address.sin_zero), '\0', 8);
 
     if (bind(server_socket, (sockaddr *) &server_address, sizeof(server_address)) < 0)
@@ -47,14 +47,14 @@ void TCPServer::InitializeSocket()
         std::cout << "Listening...\n";
     }
 
-    // Create a semaphore with initial and max counts of MAX_SEM_COUNT
-    semaphore = CreateSemaphoreA(
+    // Create a mSemaphore with initial and max counts of MAX_SEM_COUNT
+    mSemaphore = CreateSemaphoreA(
             nullptr,           // default security attributes
-            threadCount,               // initial count
+            mThreadCount,               // initial count
             MAXTHREADCOUNT,                       // maximum count
-            nullptr);                     // unnamed semaphore
+            nullptr);                     // unnamed mSemaphore
 
-    if (semaphore == nullptr)
+    if (mSemaphore == nullptr)
     {
         std::cout << "CreateSemaphore error\n";
         return;
@@ -68,16 +68,16 @@ void TCPServer::InitializeSocket()
         int size = sizeof(client_address);
         int clientSocket = ::accept(server_socket, (sockaddr*)&client_address, (socklen_t*) &size);
 
-        pthread_t t;
+        pthread_t t = nullptr;
         auto* parameter = new socketParam();
         parameter->clientSocket = clientSocket;
         parameter->saddr = (sockaddr*)&client_address;
         parameter->self = this;
 
         int res = pthread_create(&t, nullptr, (THREADFUNCPTR) &TCPServer::ClientCommunication, parameter);
-    } while (active);
+    } while (mActive);
 
-    ReleaseSemaphore(semaphore, 1, nullptr);
+    ReleaseSemaphore(mSemaphore, 1, nullptr);
 }
 
 void TCPServer::ClientCommunication(void* _parameter)
@@ -87,7 +87,7 @@ void TCPServer::ClientCommunication(void* _parameter)
     TCPServer* self = p->self;
     bool shouldConnect = true;
 
-    if (self->threadCount < MAXTHREADCOUNT)
+    if (self->mThreadCount < MAXTHREADCOUNT)
     {
         std::cout << "Client connected..." << std::endl;
         self->IncrCounter();
@@ -144,8 +144,10 @@ void TCPServer::ClientCommunication(void* _parameter)
                 reply = "No method found!";
             }
 
+            self->updateSensors();
+
             reply += "\n";
-            int sVal = send(clientSocket, reply.c_str(), reply.size(), 0);
+            int sVal = send(clientSocket, reply.c_str(), reply.size() + 1, 0);
             if (sVal < 0)
             {
                 std::cout << "Error on sending\n";
@@ -166,23 +168,23 @@ void TCPServer::ClientCommunication(void* _parameter)
 
 void TCPServer::IncrCounter()
 {
-    if (threadCount < MAXTHREADCOUNT)
-        threadCount++;
+    if (mThreadCount < MAXTHREADCOUNT)
+        mThreadCount++;
 
-    std::cout << "Connected clients: " << threadCount << std::endl;
+    std::cout << "Connected clients: " << mThreadCount << std::endl;
 }
 
 void TCPServer::DecrCounter()
 {
-    if (threadCount > 0)
-        threadCount--;
+    if (mThreadCount > 0)
+        mThreadCount--;
 }
 
 void TCPServer::initSensors()
 {
-    sensors["air"] = {};
-    sensors["noise"] = {};
-    sensors["light"] = {};
+    mSensors["air"] = {};
+    mSensors["noise"] = {};
+    mSensors["light"] = {};
 }
 
 void TCPServer::updateSensors()
@@ -190,13 +192,15 @@ void TCPServer::updateSensors()
     std::random_device rd;
     std::mt19937 mt(rd());
     std::uniform_int_distribution<int> counts(1, 10);
-    for (auto& s : sensors)
+    std::uniform_int_distribution<int> values(1, 100);
+
+    for (auto& s : mSensors)
     {
         int count = counts(mt);
-        std::uniform_int_distribution<int> values(1, 1000);
+        s.second.clear();
         for (int i = 0; i < count; i++)
         {
-            int val = counts(mt);
+            int val = values(mt);
             s.second.push_back(val);
         }
     }
@@ -204,8 +208,8 @@ void TCPServer::updateSensors()
 
 std::string TCPServer::getSensortypes()
 {
-    std::string res;
-    for (const auto& s : sensors)
+    std::string res = "";
+    for (const auto& s : mSensors)
     {
         res += s.first + ";";
     }
@@ -213,11 +217,11 @@ std::string TCPServer::getSensortypes()
     return res;
 }
 
-std::string TCPServer::getSensor(const std::string& sensor)
+std::string TCPServer::getSensor(const std::string& _sensor)
 {
-    std::string res;
-    auto iter = sensors.find(sensor);
-    if (iter != sensors.end())
+    std::string res = "";
+    auto iter = mSensors.find(_sensor);
+    if (iter != mSensors.end())
     {
         std::time_t time = std::time(nullptr);
         res += std::to_string(time) + "|";
@@ -240,7 +244,7 @@ std::string TCPServer::getAllSensors()
     std::time_t time = std::time(nullptr);
     std::string res = std::to_string(time) + "|";
 
-    for (const auto& s : sensors)
+    for (const auto& s : mSensors)
     {
         res += s.first + ";";
         for (auto i : s.second)

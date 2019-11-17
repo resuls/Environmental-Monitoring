@@ -18,10 +18,10 @@
 class TCPServer
 {
 private:
-    int PORTNUM;
-    bool active;
-    int threadCount;
-    HANDLE semaphore;
+    int mPortNum;
+    bool mActive;
+    int mThreadCount;
+    HANDLE mSemaphore;
     void InitializeSocket();
     static void ClientCommunication(void*);
     void IncrCounter();

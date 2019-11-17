@@ -23,11 +23,11 @@
 class TCPServer
 {
 private:
-    int PORTNUM;
-    bool active;
-    int threadCount;
-    HANDLE semaphore;
-    std::map <std::string, std::vector<int> > sensors;
+    int mPortNum;
+    bool mActive;
+    int mThreadCount;
+    HANDLE mSemaphore;
+    std::map <std::string, std::vector<int> > mSensors;
     void InitializeSocket();
     static void ClientCommunication(void*);
     void IncrCounter();

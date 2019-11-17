@@ -2,39 +2,24 @@ import java.util.ArrayList;
 
 public class EnvironmentData
 {
-    private String name;
-    private ArrayList<Integer> values;
-    private String timestamp;
+    private String mName;
+    private ArrayList<Integer> mValues;
+    private String mTimestamp;
 
-    public EnvironmentData(String name, ArrayList<Integer> values, String timestamp)
+    public EnvironmentData(String _mName, ArrayList<Integer> _values, String _timestamp)
     {
-        this.name = name;
-        this.values = values;
-        this.timestamp = timestamp;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public ArrayList<Integer> getValues()
-    {
-        return values;
-    }
-
-    public String getTimestamp()
-    {
-        return timestamp;
+        this.mName = _mName;
+        this.mValues = _values;
+        this.mTimestamp = _timestamp;
     }
 
     @Override
     public String toString()
     {
         return "EnvironmentData{" +
-                "name='" + name + '\'' +
-                ", values=" + values +
-                ", timestamp='" + timestamp + '\'' +
+                "name='" + mName + '\'' +
+                ", values=" + mValues +
+                ", timestamp='" + mTimestamp + '\'' +
                 '}';
     }
 }

@@ -7,14 +7,14 @@ import java.util.ArrayList;
 
 public class ClientService implements IEnvService
 {
-    private final String host;
-    private final int portNumber;
-    private Socket socket;
+    private final String mHost;
+    private final int mPortNumber;
+    private Socket mSocket;
 
-    public ClientService(int portNumber, String host)
+    public ClientService(int _mPortNumber, String _mHost)
     {
-        this.host = host;
-        this.portNumber = portNumber;
+        this.mHost = _mHost;
+        this.mPortNumber = _mPortNumber;
         try
         {
             connect();
@@ -26,15 +26,15 @@ public class ClientService implements IEnvService
 
     private void connect() throws IOException
     {
-        System.out.println("Creating socket to '" + host + "' on port " + portNumber);
-        socket = new Socket(host, portNumber);
+        System.out.println("Creating socket to '" + mHost + "' on port " + mPortNumber);
+        mSocket = new Socket(mHost, mPortNumber);
     }
 
     private void sendMessage(String _message)
     {
         try
         {
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            PrintWriter out = new PrintWriter(mSocket.getOutputStream(), true);
             out.println(_message);
         } catch (IOException e)
         {
@@ -46,7 +46,7 @@ public class ClientService implements IEnvService
     {
         try
         {
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
             return br.readLine();
         } catch (IOException e)
         {

@@ -4,7 +4,7 @@ import java.net.Socket;
 
 public class Server
 {
-    public static void main(String[] args) throws IOException
+    public static void main(String[] _args) throws IOException
     {
         final int portNumber = 5555;
         boolean active = true;

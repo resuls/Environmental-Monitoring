@@ -2,9 +2,9 @@
 
 TCPServer::TCPServer(int _portnum)
 {
-    PORTNUM = _portnum;
-    active = true;
-    threadCount = 0;
+    mPortNum = _portnum;
+    mActive = true;
+    mThreadCount = 0;
     InitializeSocket();
 }
 
@@ -29,7 +29,7 @@ void TCPServer::InitializeSocket()
     // Bind
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons(PORTNUM);
+    server_address.sin_port = htons(mPortNum);
     memset(&(server_address.sin_zero), '\0', 8);
 
     if (bind(server_socket, (sockaddr *) &server_address, sizeof(server_address)) < 0)
@@ -52,14 +52,14 @@ void TCPServer::InitializeSocket()
         std::cout << "Listening...\n";
     }
 
-    // Create a semaphore with initial and max counts of MAX_SEM_COUNT
-    semaphore = CreateSemaphoreA(
+    // Create a mSemaphore with initial and max counts of MAX_SEM_COUNT
+    mSemaphore = CreateSemaphoreA(
             nullptr,           // default security attributes
-            threadCount,               // initial count
+            mThreadCount,               // initial count
             MAXTHREADCOUNT,                       // maximum count
-            nullptr);                     // unnamed semaphore
+            nullptr);                     // unnamed mSemaphore
 
-    if (semaphore == nullptr)
+    if (mSemaphore == nullptr)
     {
         std::cout << "CreateSemaphore error\n";
         return;
@@ -80,9 +80,9 @@ void TCPServer::InitializeSocket()
         parameter->self = this;
 
         int res = pthread_create(&t, nullptr, (THREADFUNCPTR) &TCPServer::ClientCommunication, parameter);
-    } while (active);
+    } while (mActive);
 
-    ReleaseSemaphore(semaphore, 1, nullptr);
+    ReleaseSemaphore(mSemaphore, 1, nullptr);
 }
 
 void TCPServer::ClientCommunication(void* _parameter)
@@ -92,7 +92,7 @@ void TCPServer::ClientCommunication(void* _parameter)
     TCPServer* self = p->self;
     bool shouldConnect = true;
 
-    if (self->threadCount < MAXTHREADCOUNT)
+    if (self->mThreadCount < MAXTHREADCOUNT)
     {
         std::cout << "Client connected..." << std::endl;
         self->IncrCounter();
@@ -155,14 +155,14 @@ void TCPServer::ClientCommunication(void* _parameter)
 
 void TCPServer::IncrCounter()
 {
-    if (threadCount < MAXTHREADCOUNT)
-        threadCount++;
+    if (mThreadCount < MAXTHREADCOUNT)
+        mThreadCount++;
 
-    std::cout << "Connected clients: " << threadCount << std::endl;
+    std::cout << "Connected clients: " << mThreadCount << std::endl;
 }
 
 void TCPServer::DecrCounter()
 {
-    if (threadCount > 0)
-        threadCount--;
+    if (mThreadCount > 0)
+        mThreadCount--;
 }
