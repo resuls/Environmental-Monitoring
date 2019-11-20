@@ -1,3 +1,5 @@
+package tcp;
+
 public interface IEnvService
 {
     String[] requestEnvironmentDataTypes();
