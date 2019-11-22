@@ -1,8 +1,8 @@
 # Building an environmental monitoring app using the following:
--C++ sockets, Java sockets, threads, synchronisation
--RMI, Servlet, HTML
--JAXB, SOAP-Web Service, REST-Web Service
--REST sensor coupling
+- C++ sockets, Java sockets, threads, synchronisation
+- RMI, Servlet, HTML
+- JAXB, SOAP-Web Service, REST-Web Service
+- REST sensor coupling
 
 ## Socket
 Implementing a client-server communication using sockets.
