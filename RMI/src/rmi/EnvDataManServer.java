@@ -1,6 +1,6 @@
 package rmi;
 
-import tcp.EnvironmentData;
+import rmi.EnvironmentData;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

@@ -1,7 +1,5 @@
 package rmi;
 
-import tcp.EnvironmentData;
-
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 

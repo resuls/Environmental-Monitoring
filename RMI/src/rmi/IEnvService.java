@@ -1,7 +1,5 @@
 package rmi;
 
-import tcp.EnvironmentData;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
