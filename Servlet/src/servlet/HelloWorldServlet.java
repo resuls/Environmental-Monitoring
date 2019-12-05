@@ -8,16 +8,16 @@ import java.io.PrintWriter;
 
 @WebServlet(
         name = "VIS-Test-Servlet",
-        description = "a small test servlet …",
+        description = "a small test servlet",
         urlPatterns = {"/"}
 )
 public class HelloWorldServlet extends HttpServlet
 {
-    private String message;
+    private int vCount;
 
     public void init() throws ServletException
     {
-        message = "Hello World";
+        vCount = 0;
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -27,7 +27,7 @@ public class HelloWorldServlet extends HttpServlet
         response.setContentType("text/html");
 
         PrintWriter out = response.getWriter();
-        out.println("<h1>" + message + "</h1>");
+        out.println("<h1>" + ++vCount + "</h1>");
     }
 
     public void destroy()
