@@ -1,8 +1,10 @@
 package tcp;
 
+import java.io.IOException;
+
 public class MainTest
 {
-    public static void main(String[] _argv)
+    public static void main(String[] _argv) throws IOException
     {
         IEnvService service = new ClientService(5555, "127.0.0.1");
 

@@ -13,23 +13,22 @@ public class ClientService implements IEnvService
     private final int mPortNumber;
     private Socket mSocket;
 
-    public ClientService(int _mPortNumber, String _mHost)
+    public ClientService(int _mPortNumber, String _mHost) throws IOException
     {
         this.mHost = _mHost;
         this.mPortNumber = _mPortNumber;
-        try
-        {
-            connect();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        connect();
     }
 
     private void connect() throws IOException
     {
         System.out.println("Creating socket to '" + mHost + "' on port " + mPortNumber);
         mSocket = new Socket(mHost, mPortNumber);
+    }
+
+    public void disconnect() throws IOException
+    {
+        mSocket.close();
     }
 
     private void sendMessage(String _message)
